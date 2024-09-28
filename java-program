@@ -1,0 +1,144 @@
+AIM:
+To write a java program to implement for socket programming.
+ ALGORITHM:
+CLIENT SIDE
+Step 1:Create a Socket object to connect to the server.
+Step 2:Specify the server's IP address and port.
+Step 3:Create InputStream and OutputStream objects to send and receive data.
+Step 4:Use the output stream to send data to the server.
+Step 5:Use the input stream to read data from the server.
+Step 6:Close the input/output streams and the socket when the communication is complete.
+SERVER SIDE
+Step 1:Create a ServerSocket object to listen for incoming connections.
+Step 2:Specify the port on which the server will listen.
+Step 3:Use the accept() method to block and wait for a client to connect.
+Step 4:Once a connection is accepted, a new Socket object is created for communication with the 
+client.
+Step 5:Create InputStream and OutputStream objects to send and receive data.
+Step 6:Use the input stream to read data from the client.
+Step 7:Use the output stream to send data back to the client.
+Step 8:Close the input/output streams and the client socket when the communication is complete.
+PROGRAM:
+CLIENT SIDE:
+import java.io.*;
+import java.net.*;
+public class Client {
+// initialize socket and input output streams
+private Socket socket = null;
+private DataInputStream input = null;
+private DataOutputStream out = null;
+// constructor to put ip address and port
+public Client(String address, int port)
+{
+// establish a connection
+try {
+socket = new Socket(address, port);
+System.out.println("Connected");
+// takes input from terminal
+input = new DataInputStream(System.in);
+// sends output to the socket
+out = new DataOutputStream(
+socket.getOutputStream());
+}
+catch (UnknownHostException u) {
+System.out.println(u);
+return;
+}
+catch (IOException i) {
+System.out.println(i);
+return;
+}
+// string to read message from input
+String line = "";
+// keep reading until "Over" is input
+while (!line.equals("Over")) {
+try {
+line = input.readLine();
+out.writeUTF(line);
+}
+catch (IOException i) {
+System.out.println(i);
+}
+}
+// close the connection
+try {
+input.close();
+out.close();
+socket.close();
+}
+catch (IOException i) {
+System.out.println(i);
+}
+}
+public static void main(String args[])
+{
+Client client = new Client("127.0.0.1", 5000);
+}
+}
+SERVER SIDE:
+import java.net.*;
+import java.io.*;
+public class Server
+{
+//initialize socket and input stream
+private Socket socket = null;
+private ServerSocket server = null;
+private DataInputStream in = null;
+// constructor with port
+public Server(int port)
+{
+// starts server and waits for a connection
+try
+{
+server = new ServerSocket(port);
+System.out.println("Server started");
+System.out.println("Waiting for a client ...");
+socket = server.accept();
+System.out.println("Client accepted");
+// takes input from the client socket
+in = new DataInputStream(
+new BufferedInputStream(socket.getInputStream()));
+String line = "";
+// reads message from client until "Over" is sent
+while (!line.equals("Over"))
+{
+try
+{
+line = in.readUTF();
+System.out.println(line);
+}
+catch(IOException i)
+{
+System.out.println(i);
+}
+}
+System.out.println("Closing connection");
+// close connection
+socket.close();
+in.close();
+}
+catch(IOException i)
+{
+System.out.println(i);
+}
+}
+public static void main(String args[])
+{
+Server server = new Server(5000);
+}
+}
+OUTPUT:
+C:\Program Files\Java\jdk1.6.0\bin >javac Server.java
+C:\Program Files\Java\jdk1.6.0\bin >java Server
+Server started
+Waiting for a client ...
+Client accepted
+This is test message for socket pogramming
+C:\Program Files\Java\jdk1.6.0\bin >javac Client.java
+Note: Client.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+C:\Program Files\Java\jdk1.6.0\bin >java Client
+Connected
+This is test message for socket pogramming
+RESULT:
+Thus the java program for socket programming has been executed successfully and verified
